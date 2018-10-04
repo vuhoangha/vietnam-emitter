@@ -5,9 +5,10 @@ const Emitter = {
     getId: () => {
         return uuidv4();
     },
-    addListener: (event, idEvent = uuidv4(), cb) => {
+    addListener: (event, id, cb) => {
         if (!cb) return;
         if (!dicFunc[event]) dicFunc[event] = [];
+        const idEvent = id || Emitter.getId();
         if (dicFunc[event].find(item => item.id === idEvent)) return;
         dicFunc[event].push({
             id: idEvent,
