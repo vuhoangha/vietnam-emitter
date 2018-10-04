@@ -1,7 +1,7 @@
 const uuidv4 = require('uuid/v4');
 const dicFunc = {};
 
-module.exports = {
+const Emitter = {
     getId: () => {
         return uuidv4();
     },
@@ -36,7 +36,9 @@ module.exports = {
     deleteByIdEvent: idEvent => {
         if (!dicFunc) return;
         Object.keys(dicFunc).map(event => {
-            deleteListener(event, idEvent);
+            Emitter.deleteListener(event, idEvent);
         });
     }
 };
+
+module.exports = Emitter;
