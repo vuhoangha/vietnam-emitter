@@ -1,5 +1,6 @@
 const uuidv4 = require('uuid/v4');
 const dicFunc = {};
+const dicPTC = {};
 
 const Emitter = {
     getId: () => {
@@ -39,6 +40,35 @@ const Emitter = {
         Object.keys(dicFunc).map(event => {
             Emitter.deleteListener(event, idEvent);
         });
+    },
+    addChildPTC: (parentID, childID, func) => {
+        dicPTC[parentID] = dicPTC[parentID] || [];
+        if (dicPTC[parentID].find(a => a.childID === childID)) return;
+        dicPTC[parentID].push({
+            childID,
+            func
+        });
+    },
+    parentEmitPTC: (parentID, param = {}, isPromise) => {
+        return new Promise(resolve => {
+            if (!dicPTC[parentID]) return resolve();
+            const listResul = dicPTC[parentID].map(item => item.func(param));
+            return isPromise
+                ? Promise.all(listResul).then(resolve)
+                : resolve(listResul);
+        });
+    },
+    removeChildPTC: (parentID, childID) => {
+        if (!dicPTC || !dicPTC[parentID]) return;
+
+        let index = -1;
+        for (let i = 0; i < dicPTC[parentID].length; i++) {
+            if (dicPTC[parentID][i].childID === childID) {
+                index = i;
+                break;
+            }
+        }
+        if (index !== -1) dicPTC[parentID].splice(index, 1);
     }
 };
 
